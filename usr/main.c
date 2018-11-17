@@ -2,7 +2,7 @@
  * @Author: Zheng Qihang
  * @Date: 2018-11-08 20:34:00
  * @Last Modified by: Zheng Qihang
- * @Last Modified time: 2018-11-16 19:45:57
+ * @Last Modified time: 2018-11-17 23:37:43
  */
 /* c std lib header file */
 #include "main.h"
@@ -11,9 +11,10 @@
 #include "nbiot.h"
 #include "uart.h"
 void usage_error(const char *s) {
-    printf(YELLOW "Usage :" NONE "./%s [-p -b -h]\n \
+    printf(YELLOW "Usage :" NONE "./%s [-p -b -s -h ]\n \
     -p  tty port  default:\"/dev/ttyUSB0\" \n \
     -b  baud rate default:\"9600\" \n \
+    -s  set the server ip and port  default:\"180.101.147.115:5683\" \n \
     -h  display help \n \
     -v  verbose mode \n \
     when start program you can : \n \
@@ -25,11 +26,13 @@ void usage_error(const char *s) {
     exit(-1);
 }
 
-void config_print(const char *port, int rate) {
-    printf("Now Config is : \n \
-    tty_port  : %s\n \
-    baud_rate : %d\n",
-           port, rate);
+void config_print(const char *port, int rate, const char *ip, const char *s_port) {
+    printf(VERBOSE_C "Now Config is : \n \
+    tty_port    : %s\n \
+    baud_rate   : %d\n \
+    server_ip   : %s\n \
+    server_port : %s\n",
+           port, rate, ip, s_port);
 }
 void opt_print(void) {
     printf(YELLOW "帮助:" NONE " \n \
@@ -43,10 +46,12 @@ int main(int argc, char *argv[]) {
     char optch;
     int ret= -1;
     char nb_tty_port[30]= "/dev/ttyUSB0";
+    char server_ip[30]= "180.101.147.115";
+    char server_port[30]= "5683";
     int baud_rate= 9600;
     bool verbose_mode= false;
     pthread_t th_uart_rx= -1, nb_read_msg= -1;
-    while ((optch= getopt(argc, argv, "p:b:hv")) != -1) {
+    while ((optch= getopt(argc, argv, "p:b:s:hv")) != -1) {
         switch (optch) {
         case 'p':
             strcpy(nb_tty_port, optarg);
@@ -54,6 +59,19 @@ int main(int argc, char *argv[]) {
         case 'b':
             baud_rate= atoi(optarg);
             break;
+        case 's': {
+            if (!check_ip_port(optarg)) {
+                printf(ERROR_C "IP or Port, Please check ip and prot: \"%s\"\n",
+                       optarg);
+                exit(-1);
+            } else {
+                char *pos= strchr(optarg, ':');
+                memset(server_ip, 0, strlen(server_ip));
+                memset(server_port, 0, strlen(server_port));
+                strncpy(server_ip, optarg, pos - optarg);
+                strcpy(server_port, pos + 1);
+            }
+        } break;
         case 'h':
             usage_error(argv[0]);
             break;
@@ -65,7 +83,7 @@ int main(int argc, char *argv[]) {
             break;
         }
     }
-    config_print(nb_tty_port, baud_rate);
+    config_print(nb_tty_port, baud_rate, server_ip, server_port);
     ret= UART_Open(&NB_UART_FD, nb_tty_port);
     if (ret < 0) {
         printf(ERROR_C "Uart Open, Please check the port : \"%s\"\n", nb_tty_port);

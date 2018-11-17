@@ -137,3 +137,40 @@ char *strip(const char *str) {
 
     return out;
 }
+
+/* @brief 检查端口号与ip是否正确
+ *      ip_prot 格式为 xxx.xxx.xxx.xxx:xxxx
+ *      返回 1正确 0错误
+ * */
+int check_ip_port(const char *ip_port) {
+    char server_ip[30]= {0};
+    char ip_num[4][4];
+    int num;
+    char server_port[30]= {0};
+    char *pos= strchr(ip_port, ':');
+    char *lastdotpos= server_ip;
+    char *dotpos= NULL;
+    int dotlen= 0;
+    if (pos == NULL || *(pos + 1) == '\0') { return 0; }
+    strncpy(server_ip, ip_port, pos - ip_port);
+    strcpy(server_port, pos + 1);
+    for (int i= 0; i < 3; ++i) { //分三次截取ip中的数字
+        dotpos= strchr(lastdotpos, '.');
+        if (dotpos == NULL) { return 0; }
+        strncpy(ip_num[i], lastdotpos, dotpos - lastdotpos);
+        num= atoi(ip_num[i]);
+        if (num < 0 || num > 255) { return 0; }
+        // printf("ip_num :%d\n", num);
+        lastdotpos= dotpos + 1;
+    }
+    //截取最后一个ip的数字
+    strncpy(ip_num[3], lastdotpos, strlen(server_ip) - (lastdotpos - server_ip));
+    num= atoi(ip_num[3]);
+    if (num < 0 || num > 255) { return 0; }
+    // printf("ip_num :%d\n", num);
+    // 检查端口号是否错误
+    num= atoi(server_port);
+    // printf("prot :%d\n", num);
+    if (num < 0 || num > 65535) { return 0; }
+    return 1;
+}

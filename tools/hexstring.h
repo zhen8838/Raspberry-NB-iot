@@ -12,4 +12,5 @@ extern char *DecToString(uint32_t Dec, char *pString);
 extern char *lstrip(const char *str);
 extern char *rstrip(const char *str);
 extern char *strip(const char *str);
+extern int check_ip_port(const char *ip_port);
 #endif
