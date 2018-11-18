@@ -49,4 +49,4 @@ Usage :././RaspNB [-p -b -s -h ]
 
 # 截图
 
-![示例](screenshot.png)
+![完整示例](useage.gif)
