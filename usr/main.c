@@ -18,8 +18,8 @@ void usage_error(const char *s) {
     -h  display help \n \
     -v  verbose mode \n \
     when start program you can : \n \
-    press 'c'	设置CDP服务器（IoT平台）的IP和端口号    \n \
-    press 's'	按下按键2发送数据到服务器    \n \
+    press 'c'	连接CDP服务器（IoT平台）    \n \
+    press 's'	发送数据到服务器    \n \
     press 'h'	获取帮助  \n \
     press 'q'	退出本程序  \n",
            s);
@@ -36,8 +36,8 @@ void config_print(const char *port, int rate, const char *ip, const char *s_port
 }
 void opt_print(void) {
     printf(YELLOW "帮助:" NONE " \n \
-输入 'c'	设置CDP服务器（IoT平台）的IP和端口号    \n \
-输入 's'	按下按键2发送数据到服务器    \n \
+输入 'c'	连接CDP服务器（IoT平台）    \n \
+输入 's'	发送数据到服务器    \n \
 输入 'h'	获取帮助  \n \
 输入 'q'	退出本程序  \n");
 }
