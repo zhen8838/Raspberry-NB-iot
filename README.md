@@ -1,5 +1,6 @@
 # Raspberry-NB-iot
 树莓派3B使用NB-iot,上传cpu温度以及内存使用率.
+
 Raspberry 3B use NB-iot,update the cpu temperature and memory utilization rate.
 
 **注:** 本程序暂时只支持[物联网俱乐部NB-iot开发板](https://item.taobao.com/item.htm?spm=a230r.1.14.130.293c66c4POneaH&id=576818997326&ns=1&abbucket=7#detail)
@@ -7,6 +8,11 @@ Raspberry 3B use NB-iot,update the cpu temperature and memory utilization rate.
 
 # 安装
 
+**注:** 请先安装`cmake`与`git`:
+```sh
+sudo apt-get install cmake git
+```
+执行:
 ```sh
 git clone https://github.com/zhen8838/Raspberry-NB-iot.git
 cd Raspberry-NB-iot 
