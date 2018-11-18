@@ -69,7 +69,7 @@ float get_mem_use(void) {
 
 int main(int argc, char *argv[]) {
     char msgSend[9]= {0};
-    char optch;
+    int optch;
     int ret= -1;
     char nb_tty_port[30]= "/dev/ttyUSB0";
     char server_ip[30]= "180.101.147.115";
@@ -77,35 +77,38 @@ int main(int argc, char *argv[]) {
     int baud_rate= 9600;
     bool verbose_mode= false;
     pthread_t th_uart_rx= -1, nb_read_msg= -1;
-    while ((optch= getopt(argc, argv, "p:b:s:hv")) != -1) {
-        switch (optch) {
-        case 'p':
-            strcpy(nb_tty_port, optarg);
-            break;
-        case 'b':
-            baud_rate= atoi(optarg);
-            break;
-        case 's': {
-            if (!check_ip_port(optarg)) {
-                printf(ERROR_C "IP or Port, Please check ip and prot: \"%s\"\n",
-                       optarg);
-                exit(-1);
-            } else {
-                char *pos= strchr(optarg, ':');
-                memset(server_ip, 0, strlen(server_ip));
-                memset(server_port, 0, strlen(server_port));
-                strncpy(server_ip, optarg, pos - optarg);
-                strcpy(server_port, pos + 1);
+    if (argc > 1) {
+        while ((optch= getopt(argc, argv, "p:b:s:hv")) != -1) {
+            switch (optch) {
+            case 'p':
+                strcpy(nb_tty_port, optarg);
+                break;
+            case 'b':
+                baud_rate= atoi(optarg);
+                break;
+            case 's': {
+                if (!check_ip_port(optarg)) {
+                    printf(ERROR_C "IP or Port, Please check ip and prot: \"%s\"\n",
+                           optarg);
+                    exit(-1);
+                } else {
+                    char *pos= strchr(optarg, ':');
+                    memset(server_ip, 0, strlen(server_ip));
+                    memset(server_port, 0, strlen(server_port));
+                    strncpy(server_ip, optarg, pos - optarg);
+                    strcpy(server_port, pos + 1);
+                }
+            } break;
+            case 'h':
+                usage_error(argv[0]);
+                break;
+            case 'v':
+                verbose_mode= true;
+                break;
+            default:
+                usage_error(argv[0]);
+                break;
             }
-        } break;
-        case 'h':
-            usage_error(argv[0]);
-            break;
-        case 'v':
-            verbose_mode= true;
-            break;
-        default:
-            break;
         }
     }
     config_print(nb_tty_port, baud_rate, server_ip, server_port);
