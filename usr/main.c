@@ -11,7 +11,7 @@
 #include "nbiot.h"
 #include "uart.h"
 void usage_error(const char *s) {
-    printf(YELLOW "Usage :" NONE "./%s [-p -b -s -h ]\n \
+    printf(YELLOW "Usage :" NONE "%s [-p -b -s -h ]\n \
     -p  tty port  default:\"/dev/ttyUSB0\" \n \
     -b  baud rate default:\"9600\" \n \
     -s  set the server ip and port  default:\"180.101.147.115:5683\" \n \
@@ -105,7 +105,6 @@ int main(int argc, char *argv[]) {
             verbose_mode= true;
             break;
         default:
-            usage_error(argv[0]);
             break;
         }
     }
