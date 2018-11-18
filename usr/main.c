@@ -20,8 +20,8 @@ void usage_error(const char *s) {
     when start program you can : \n \
     press 'c'	设置CDP服务器（IoT平台）的IP和端口号    \n \
     press 's'	按下按键2发送数据到服务器    \n \
-	press 'h'	获取帮助  \n \
-	press 'q'	退出本程序  \n",
+    press 'h'	获取帮助  \n \
+    press 'q'	退出本程序  \n",
            s);
     exit(-1);
 }
@@ -41,6 +41,32 @@ void opt_print(void) {
 输入 'h'	获取帮助  \n \
 输入 'q'	退出本程序  \n");
 }
+/* @brief  读取cpu温度
+ *
+ * */
+float get_cpu_temp(void) {
+    uint32_t temp;
+#ifdef __amd64
+    FILE *fp= fopen("/sys/class/thermal/thermal_zone0/temp", "r");
+#endif
+#ifdef __arm__
+    FILE *fp= fopen("/sys/class/thermal/thermal_zone0/temp", "r");
+#endif
+    fscanf(fp, "%u", &temp);
+    fclose(fp);
+    return temp / 1000.0;
+}
+/* @brief  read the mem usage
+ *
+ * */
+float get_mem_use(void) {
+    struct sysinfo si;
+    sysinfo(&si);
+    float total= (double)si.totalram / 1024 / 1024;
+    float freeram= (double)si.freeram / 1024 / 1024;
+    return ((total - freeram) / total) * 100;
+}
+
 int main(int argc, char *argv[]) {
     char msgSend[9]= {0};
     char optch;
@@ -122,7 +148,8 @@ int main(int argc, char *argv[]) {
             break;
         case 's': {
             // 读取温湿度数据并发送
-            char wendu[10]= "12.312.3";
+            char wendu[10]= {0};
+            sprintf(wendu, "%.1f%.1f", get_cpu_temp(), get_mem_use());
             ByteToString(wendu, msgSend, 8);
             NB_SendMsgToServer(msgSend, verbose_mode);
             printf(OK_C "Send Success!\n");
